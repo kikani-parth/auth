@@ -24,17 +24,6 @@ class LoginForm extends Component {
           .then(this.onLoginSuccess.bind(this))
           .catch(this.onLoginFailure.bind(this));
       });
-    // firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(email, password)
-    //   .catch(() => {
-    //     firebase
-    //       .auth()
-    //       .createUserWithEmailAndPassword(email, password)
-    //       .catch(() => {
-    //         this.setState({ error: 'Authentication Failed' });
-    //       });
-    //   });
   }
 
   onLoginFailure() {
