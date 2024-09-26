@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Platform } from 'react-native';
+import { View, StyleSheet, Platform } from 'react-native';
 
 const Card = ({ children }) => {
   return <View style={styles.container}>{children}</View>;
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Card;
+export { Card };
