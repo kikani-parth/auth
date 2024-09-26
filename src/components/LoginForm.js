@@ -17,9 +17,7 @@ class LoginForm extends Component {
 
     signInWithEmailAndPassword(auth, email, password)
       .then(this.onLoginSuccess.bind(this))
-      .catch((error) => {
-        console.log(error);
-
+      .catch(() => {
         createUserWithEmailAndPassword(auth, email, password)
           .then(this.onLoginSuccess.bind(this))
           .catch(this.onLoginFailure.bind(this));
