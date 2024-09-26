@@ -1,30 +1,29 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import {
-  getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
-import { CustomButton, Card, CardSection, Input } from './common';
+import { CustomButton, Card, CardSection, Input, Spinner } from './common';
 
 class LoginForm extends Component {
-  state = { email: '', password: '', error: '' };
+  state = { email: '', password: '', error: '', loading: false };
+
   onButtonPress() {
     const { email, password } = this.state;
-    const { firebaseApp } = this.props;
+    const { auth } = this.props;
 
-    this.setState({ error: '' });
+    this.setState({ error: '', loading: true });
 
-    const auth = getAuth(firebaseApp);
-    signInWithEmailAndPassword(auth, email, password).catch((error) => {
-      console.log(error);
-
-      createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(this.onLoginSuccess.bind(this))
+      .catch((error) => {
         console.log(error);
 
-        this.setState({ error: 'Authentication Failed' });
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(this.onLoginSuccess.bind(this))
+          .catch(this.onLoginFailure.bind(this));
       });
-    });
     // firebase
     //   .auth()
     //   .signInWithEmailAndPassword(email, password)
@@ -36,6 +35,24 @@ class LoginForm extends Component {
     //         this.setState({ error: 'Authentication Failed' });
     //       });
     //   });
+  }
+
+  onLoginFailure() {
+    this.setState({ error: 'Authentication Failed', loading: false });
+  }
+
+  onLoginSuccess() {
+    this.setState({ email: '', password: '', error: '', loading: false });
+  }
+
+  renderButton() {
+    if (this.state.loading) {
+      return <Spinner size="small" />;
+    }
+
+    return (
+      <CustomButton title="Login" onPress={this.onButtonPress.bind(this)} />
+    );
   }
 
   render() {
@@ -64,9 +81,7 @@ class LoginForm extends Component {
           <Text style={styles.error}>{this.state.error}</Text>
         ) : null}
 
-        <CardSection>
-          <CustomButton title="Login" onPress={this.onButtonPress.bind(this)} />
-        </CardSection>
+        <CardSection>{this.renderButton()}</CardSection>
       </Card>
     );
   }
