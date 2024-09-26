@@ -1,9 +1,42 @@
 import React, { Component } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth';
 import { CustomButton, Card, CardSection, Input } from './common';
 
 class LoginForm extends Component {
-  state = { email: '', password: '' };
+  state = { email: '', password: '', error: '' };
+  onButtonPress() {
+    const { email, password } = this.state;
+    const { firebaseApp } = this.props;
+
+    this.setState({ error: '' });
+
+    const auth = getAuth(firebaseApp);
+    signInWithEmailAndPassword(auth, email, password).catch((error) => {
+      console.log(error);
+
+      createUserWithEmailAndPassword(auth, email, password).catch((error) => {
+        console.log(error);
+
+        this.setState({ error: 'Authentication Failed' });
+      });
+    });
+    // firebase
+    //   .auth()
+    //   .signInWithEmailAndPassword(email, password)
+    //   .catch(() => {
+    //     firebase
+    //       .auth()
+    //       .createUserWithEmailAndPassword(email, password)
+    //       .catch(() => {
+    //         this.setState({ error: 'Authentication Failed' });
+    //       });
+    //   });
+  }
 
   render() {
     return (
@@ -27,14 +60,20 @@ class LoginForm extends Component {
           />
         </CardSection>
 
+        {this.state.error ? (
+          <Text style={styles.error}>{this.state.error}</Text>
+        ) : null}
+
         <CardSection>
-          <CustomButton title="Login" />
+          <CustomButton title="Login" onPress={this.onButtonPress.bind(this)} />
         </CardSection>
       </Card>
     );
   }
 }
 
-const styles = StyleSheet.create();
+const styles = StyleSheet.create({
+  error: { fontSize: 20, alignSelf: 'center', color: 'red' },
+});
 
 export default LoginForm;

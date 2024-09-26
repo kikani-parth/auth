@@ -3,6 +3,7 @@ import { View } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { Header } from './components/common';
 import LoginForm from './components/LoginForm';
+import firebase from 'firebase/compat/app';
 
 class App extends Component {
   componentDidMount() {
@@ -16,13 +17,13 @@ class App extends Component {
       measurementId: 'G-J8LDRQP5DE',
     };
 
-    initializeApp(firebaseConfig);
+    this.firebaseApp = initializeApp(firebaseConfig);
   }
   render() {
     return (
       <View>
         <Header title="Authentication" />
-        <LoginForm />
+        <LoginForm firebaseApp={this.firebaseApp} />
       </View>
     );
   }
